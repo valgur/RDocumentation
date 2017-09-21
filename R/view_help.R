@@ -57,7 +57,17 @@ view_help <- function(body){
                encode = "json",
                timeout(getOption("RDocumentation.timeOut")))
   if (status_code(resp) == 200) {
-    writeBin(content(resp, "raw"), get_html_file())
+    html <- content(resp, 'text')
+    # Remove the footer advert
+    html <- gsub('</title>', '</title>
+      <style media="screen" type="text/css">
+        .dc-footer, .footer {display:none !important;}
+        .page-wrap {
+          position: static !important;
+          overflow-y: visible !important;
+        }
+      </style>', html)
+    writeBin(charToRaw(html), get_html_file())
     browser <- getOption("browser")
     p <- tools::startDynamicHelp(NA)
     url <- build_local_url(p)
